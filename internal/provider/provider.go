@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/odeeka/minicloud-client-go/minicloud"
 )
 
@@ -75,7 +76,11 @@ func (p *minicloudProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 // Configure prepares a minicloud API client for data sources and resources.
 // func (p *minicloudProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 // }
+
 func (p *minicloudProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+
+	tflog.Info(ctx, "Configuring Minicloud client")
+
 	// Retrieve provider data from configuration
 	var config minicloudProviderModel
 	diags := req.Config.Get(ctx, &config)
@@ -121,7 +126,7 @@ func (p *minicloudProvider) Configure(ctx context.Context, req provider.Configur
 	// Default values to environment variables, but override
 	// with Terraform configuration value if set.
 
-	host := os.Getenv("MINICLOUD")
+	host := os.Getenv("MINICLOUD_HOST")
 	username := os.Getenv("MINICLOUD_USERNAME")
 	password := os.Getenv("MINICLOUD_PASSWORD")
 
@@ -174,6 +179,13 @@ func (p *minicloudProvider) Configure(ctx context.Context, req provider.Configur
 		return
 	}
 
+	ctx = tflog.SetField(ctx, "minicloud_host", host)
+	ctx = tflog.SetField(ctx, "minicloud_username", username)
+	ctx = tflog.SetField(ctx, "minicloud_password", password)
+	ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, "minicloud_password") // Mask/hide the password in the log
+
+	tflog.Debug(ctx, "Creating Minicloud client")
+
 	// Create a new minicloud client using the configuration values
 	//client, err := minicloud.NewClient(&host, &username, &password)
 	client, err := minicloud.NewClient(host, username, password)
@@ -191,6 +203,8 @@ func (p *minicloudProvider) Configure(ctx context.Context, req provider.Configur
 	// type Configure methods.
 	resp.DataSourceData = client
 	resp.ResourceData = client
+
+	tflog.Info(ctx, "Configured Minicloud client", map[string]any{"success": true})
 }
 
 // DataSources defines the data sources implemented in the provider.
@@ -207,6 +221,12 @@ func (p *minicloudProvider) DataSources(_ context.Context) []func() datasource.D
 }
 
 // Resources defines the resources implemented in the provider.
+//
+//	func (p *minicloudProvider) Resources(_ context.Context) []func() resource.Resource {
+//		return nil
+//	}
 func (p *minicloudProvider) Resources(_ context.Context) []func() resource.Resource {
-	return nil
+	return []func() resource.Resource{
+		NewVmsResource,
+	}
 }

@@ -62,3 +62,16 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 ```shell
 make testacc
 ```
+
+## Logging
+
+Investigate the different type of loggs:
+
+```bash
+cd examples/provider-install-verifcations
+TF_LOG=TRACE TF_LOG_PATH=trace.txt terraform plan
+
+TF_LOG=INFO terraform plan
+
+TF_LOG_PROVIDER=INFO terraform plan
+```

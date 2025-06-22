@@ -7,7 +7,8 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.28.0
 	github.com/hashicorp/terraform-plugin-log v0.9.0
 	github.com/hashicorp/terraform-plugin-testing v1.13.2
-	github.com/odeeka/minicloud-client-go v0.0.0-20250621220426-49ac51b7ca61
+	github.com/odeeka/minicloud-client-go v0.0.0-00010101000000-000000000000
+//github.com/odeeka/minicloud-client-go v0.0.0-20250622141655-a43f3a0bd9af
 )
 
 require (
@@ -63,3 +64,5 @@ require (
 	google.golang.org/grpc v1.72.1 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )
+
+replace github.com/odeeka/minicloud-client-go => /home/admin_pet/github/minicloud-client-go

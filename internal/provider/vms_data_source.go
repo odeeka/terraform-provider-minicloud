@@ -31,7 +31,7 @@ type vmsDataSourceModel struct {
 	Vms []vmsModel `tfsdk:"vms"`
 }
 
-// vmsModel maps coffees schema data.
+// vmsModel maps vms schema data.
 type vmsModel struct {
 	ID     types.Int64   `tfsdk:"id"`
 	Name   types.String  `tfsdk:"name"`
